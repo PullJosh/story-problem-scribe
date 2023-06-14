@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useCallback, useState } from "react";
 import TextareaAutosize from "react-textarea-autosize";
 
@@ -104,8 +105,16 @@ export default function Page() {
 
   return (
     <div className="font-serif w-screen h-screen overflow-hidden grid grid-rows-[auto,1fr]">
-      <nav className="p-6 text-center border-b border-stone-300">
-        <h1 className="text-2xl font-bold">Story Problem Scribe</h1>
+      <nav className="p-6 flex justify-between items-center border-b border-stone-300">
+        <Link href="/">
+          <h1 className="text-2xl font-bold">Story Problem Scribe</h1>
+        </Link>
+        <div>
+          Made by{" "}
+          <Link href="https://www.joshuapullen.com/" className="underline">
+            Josh Pullen
+          </Link>
+        </div>
       </nav>
       <div className="grid grid-cols-2 grid-rows-1 overflow-hidden divide-x divide-stone-300">
         <div className="p-16 overflow-y-auto">
