@@ -1,5 +1,3 @@
-import { NextResponse } from "next/server";
-
 import { Configuration, OpenAIApi } from "openai";
 
 const configuration = new Configuration({
@@ -46,5 +44,5 @@ export async function POST(request: Request) {
     { responseType: "stream" }
   );
 
-  return new Response(response.data);
+  return new Response(response.data as any);
 }
