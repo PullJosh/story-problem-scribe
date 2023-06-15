@@ -54,55 +54,39 @@ export default function Page() {
       throw new Error(response.statusText);
     }
 
-    const data = response.body;
-    console.log(data);
-    if (!data) return;
+    const { body } = response;
+    console.log(body);
+    if (!body) return;
 
-    const reader = data.getReader();
+    const reader = body.getReader();
     const decoder = new TextDecoder();
 
     let done = false;
+    let responseText = "";
     while (!done) {
       const { value, done: doneReading } = await reader.read();
       done = doneReading;
       const chunkValue = decoder.decode(value);
 
-      console.log("Chunk:", chunkValue);
+      responseText += chunkValue;
 
-      const jsonChunks = chunkValue
+      const jsonChunks = responseText
         .split("\n")
         .filter(Boolean)
-        .map((line) => line.slice(6))
+        .map((line) => line.slice(6)) // Remove "data: "
         .filter((str) => str !== "[DONE]")
-        .map((str) => JSON.parse(str));
-
-      console.log("JSON chunks:", jsonChunks);
-
-      setProblems((problems) => {
-        const newProblems = problems.map((p) => ({ ...p }));
-
-        for (const chunk of jsonChunks) {
-          let problem = newProblems.find(
-            (p) => p.id === chunk.id && p.index === chunk.choices[0].index
-          );
-
-          if (!problem) {
-            problem = {
-              id: chunk.id,
-              index: chunk.choices[0].index,
-              content: "",
-            };
-            newProblems.push(problem);
+        .map((str) => {
+          try {
+            return JSON.parse(str);
+          } catch (e) {
+            return null;
           }
+        })
+        .filter(Boolean);
 
-          const content = chunk.choices[0].delta?.content;
-          if (content) {
-            problem.content += content;
-          }
-        }
+      const newProblems = problemsFromJSONChunks(jsonChunks);
 
-        return newProblems;
-      });
+      setProblems((problems) => mergeOldAndNewProblems(problems, newProblems));
     }
     setLoading(false);
   }, []);
@@ -179,4 +163,48 @@ export default function Page() {
       </div>
     </div>
   );
+}
+
+function problemsFromJSONChunks(chunks: any[]): Problem[] {
+  let problems: Problem[] = [];
+
+  for (const chunk of chunks) {
+    let problem = problems.find(
+      (p) => p.id === chunk.id && p.index === chunk.choices[0].index
+    );
+
+    if (!problem) {
+      problem = {
+        id: chunk.id,
+        index: chunk.choices[0].index,
+        content: "",
+      };
+      problems.push(problem);
+    }
+
+    const content = chunk.choices[0].delta?.content;
+    if (content) {
+      problem.content += content;
+    }
+  }
+
+  return problems;
+}
+
+function mergeOldAndNewProblems(a: Problem[], b: Problem[]): Problem[] {
+  const problems = [...a];
+
+  for (const problem of b) {
+    const oldProblem = problems.find(
+      (p) => p.id === problem.id && p.index === problem.index
+    );
+
+    if (oldProblem) {
+      oldProblem.content = problem.content;
+    } else {
+      problems.push(problem);
+    }
+  }
+
+  return problems;
 }
