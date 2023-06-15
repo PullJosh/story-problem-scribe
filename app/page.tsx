@@ -67,12 +67,16 @@ export default function Page() {
       done = doneReading;
       const chunkValue = decoder.decode(value);
 
+      console.log("Chunk:", chunkValue);
+
       const jsonChunks = chunkValue
         .split("\n")
         .filter(Boolean)
         .map((line) => line.slice(6))
         .filter((str) => str !== "[DONE]")
         .map((str) => JSON.parse(str));
+
+      console.log("JSON chunks:", jsonChunks);
 
       setProblems((problems) => {
         const newProblems = problems.map((p) => ({ ...p }));
