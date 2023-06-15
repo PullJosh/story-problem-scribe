@@ -90,20 +90,23 @@ export default function Page() {
   }, []);
 
   return (
-    <div className="font-serif w-screen h-screen overflow-hidden grid grid-rows-[auto,1fr]">
-      <nav className="p-6 flex justify-between items-center border-b border-stone-300">
+    <div className="font-serif w-screen md:h-screen md:overflow-hidden grid grid-rows-[auto,1fr]">
+      <nav className="p-6 flex flex-col justify-center md:flex-row md:justify-between items-center border-b border-stone-300">
         <Link href="/">
-          <h1 className="text-2xl font-bold">Story Problem Scribe</h1>
+          <h1 className="text-2xl font-bold text-center">
+            Story Problem Scribe
+          </h1>
         </Link>
         <div>
-          Made by{" "}
+          <span className="hidden md:inline">Made by</span>
+          <span className="md:hidden">By</span>{" "}
           <Link href="https://www.joshuapullen.com/" className="underline">
             Josh Pullen
           </Link>
         </div>
       </nav>
-      <div className="grid grid-cols-2 grid-rows-1 overflow-hidden divide-x divide-stone-300">
-        <div className="p-16 overflow-y-auto">
+      <div className="grid grid-rows-[auto,auto] grid-cols-1 md:grid-rows-1 md:grid-cols-2 md:divide-x overflow-hidden divide-stone-300">
+        <div className="p-6 sm:p-8 md:p-16 overflow-y-auto">
           <h2 className="text-3xl font-bold mb-4">Topic</h2>
           <p className="text-xl mb-2">
             Brainstorm story problems in which students...
@@ -113,7 +116,7 @@ export default function Page() {
             value={prompt}
             onChange={(event) => setPrompt(event.target.value)}
           />
-          <div className="flex items-center space-x-4 my-8">
+          <div className="flex items-center space-x-4 mt-8">
             <div className="flex-grow border-b border-stone-300" />
             <div className="divide-x divide-stone-700">
               <button
@@ -134,7 +137,7 @@ export default function Page() {
             <div className="flex-grow border-b border-stone-300" />
           </div>
         </div>
-        <div className="p-16 overflow-y-auto">
+        <div className="p-6 sm:p-8 md:p-16 overflow-y-auto">
           <h2 className="text-3xl font-bold mb-4">Problems</h2>
           <div className="space-y-4">
             {problems.length === 0 && (
