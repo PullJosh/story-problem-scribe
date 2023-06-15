@@ -34,7 +34,6 @@ export default function Page() {
   );
 
   const brainstorm = useCallback(async (n = 1) => {
-    console.log("Loading...");
     setLoading(true);
 
     const response = await fetch("/brainstorm", {
@@ -55,7 +54,6 @@ export default function Page() {
     }
 
     const { body } = response;
-    console.log(body);
     if (!body) return;
 
     const reader = body.getReader();
